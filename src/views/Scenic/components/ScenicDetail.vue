@@ -6,7 +6,7 @@
     </div>
     <div class="scenic-vr">
       <h3>VR体验</h3>
-      <img :src="img"  alt="" v-if="img">
+      <img src="@/assets/img/vrbase.png"  alt="" v-if="img">
       <img src="@/assets/img/vr-bg.png" alt="" v-else>
       <button @click="handleVRClick">进入VR</button>
     </div>

@@ -22,6 +22,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'
 import axios from 'axios';
+import { ElMessage } from 'element-plus';
 const router = useRouter()
 
 const form = ref({
@@ -43,7 +44,7 @@ const rules = ref({
 const handleLogin = async() => {
   const res = await axios.post('/api/login',{usn:form.value.username,pwd:form.value.password})
   if (res.data.status=='success'){
-    alert('登录成功！')
+    ElMessage.success('登录成功')
   }
   else{
     alert('用户名或密码错误！')

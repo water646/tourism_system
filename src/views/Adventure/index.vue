@@ -1,14 +1,14 @@
 <template>
   <div class="adventure-container">
     <ul class="adventure-content">
-      <li v-for="(item, index) in 4" :key="index">
-        <img src="@/assets/img/piaoliu.png" alt="">
-        <h3>徒步登山</h3>
+      <li v-for="(item, index) in tableData" :key="index">
+        <img :src="item.img" alt="">
+        <h3>{{ item.name }}</h3>
         <!-- //图标循环渲染 -->
         <i v-for="(item, index) in 5" :key="index" class="iconfont icon-wujiaoxing-"></i>
         <i class="iconfont icon-liulan"></i>
         <i class="iconfont icon-liuyan"></i>
-        <p>徒步登山是一种非常有趣的探险活动。在徒步登山中，我们可以欣赏到各种不同的风景，例如山脉、森林、河流等。</p>
+        <p>{{ item.brief }}</p>
       </li>
     </ul>
     <div class="ranking">
@@ -22,22 +22,34 @@
 </template>
 <script setup>
 import { ref } from 'vue'
+import xianggelila from '@/assets/img/xianggelila.jpg'
+import nujiang from '@/assets/img/nujiang.jpg'
+import yuantian from '@/assets/img/yuantian.jpg'
+import xishuangbanna from '@/assets/img/xishuangbanna.jpg'
 const tableData = [
   {
     rank: '1',
-    name: '徒步登山',
+    name: '香格里拉普达措国家公园探险',
+    brief:'香格里拉普达措国家公园以高原湖泊、原始森林和雪山景观闻名。徒步环湖或穿越草甸，可以欣赏碧塔海的宁静与属都湖的野性风光。这里海拔较高，空气清新，非常适合喜爱摄影和高山探险的游客。',
+    img:xianggelila
   },
   {
     rank: '2',
-    name: '骑行骑行',
+    name: '怒江大峡谷探险',
+    brief:'怒江大峡谷以险峻、原始和多民族文化闻名。沿江徒步或乘船，可欣赏悬崖峭壁、瀑布溪流及梯田风光。途经怒族、傈僳族等村寨，体验浓郁民俗风情，是挑战体力与探索自然的理想路线。',
+    img:nujiang
   },
   {
     rank: '3',
-    name: '徒步登山',
+    name: '元阳梯田徒步线路',
+    brief:'元阳梯田以壮观的哈尼梯田闻名，春季水田映天，秋季金黄满坡。沿梯田小径徒步，可以近距离感受哈尼族智慧与自然和谐共生的景象。夜宿村寨还能体验民俗风情，是摄影与轻探险结合的路线。',
+    img:yuantian
   },
   {
     rank: '4',
-    name: '徒步登山',
+    name: '西双版纳热带雨林探险',
+    brief:'西双版纳拥有丰富的热带雨林生态，徒步穿行原始林区，可观察野生动物、奇花异草。探险过程中还能体验傣族文化和泼水节风情。雨林中的吊桥、瀑布和河流，为冒险增添刺激与乐趣。',
+    img:xishuangbanna
   },
 ]
 </script>

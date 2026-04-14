@@ -22,9 +22,9 @@ const router = useRouter()
 const nationalList = ref([])
 const defaultList = ref([
   { id: 1, name: "民族服饰", picture: new URL('@/assets/img/clothes.png', import.meta.url).href, router: "clothes" },
-  { id: 2, name: "民族节日", picture: new URL('@/assets/img/festival.png', import.meta.url).href, router: "festival" },
-  { id: 3, name: "民族表演", picture: new URL('@/assets/img/perform.png', import.meta.url).href, router: "perform" },
-  { id: 4, name: "民族历史", picture: new URL('@/assets/img/history.png', import.meta.url).href, router: "history" },
+  { id: 2, name: "民族节日", picture: new URL('@/assets/img/festival.png', import.meta.url).href, router: "clothes" },
+  { id: 3, name: "民族表演", picture: new URL('@/assets/img/perform.png', import.meta.url).href, router: "clothes" },
+  { id: 4, name: "民族历史", picture: new URL('@/assets/img/history.png', import.meta.url).href, router: "clothes" },
 ])
 const getNationalList = async () => {
   const res = await getNational()

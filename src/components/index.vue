@@ -19,18 +19,18 @@
                 </router-link>
               </li>
               <li>
-                <router-link to="/desc" active-class="active" custom v-slot="{ href, navigate, isActive }">
+                <!-- <router-link to="/desc" active-class="active" custom v-slot="{ href, navigate, isActive }"> -->
                   <a :href="href" @click="navigate" :class="{ active: isActive }">
                     简介
                   </a>
-                </router-link>
+                <!-- </router-link> -->
               </li>
               <li>
-                <router-link to="/about" active-class="active" custom v-slot="{ href, navigate, isActive }">
+                <!-- <router-link to="/about" active-class="active" custom v-slot="{ href, navigate, isActive }"> -->
                   <a :href="href" @click="navigate" :class="{ active: isActive }">
                     关于我们
                   </a>
-                </router-link>
+                <!-- </router-link> -->
               </li>
             </ul>
           </div>
@@ -89,7 +89,7 @@
               </el-icon>
               <span>探险旅行</span>
             </el-menu-item>
-            <el-menu-item index="8" @click="$router.push('/activity')">
+            <el-menu-item index="8" @click="$router.push('/')">
               <el-icon>
                 <ticket />
               </el-icon>
@@ -127,6 +127,7 @@
 import { ref, onMounted, watch } from 'vue'
 // import { Location, IconMenu, Goods, Map, Avatar, Calendar, Compass, Ticket } from '@element-plus/icons-vue'
 import { useRouter, useRoute } from 'vue-router'
+import axios from 'axios'
 
 const username = ref('')
 const activeMenu = ref('1')
@@ -161,8 +162,16 @@ watch(() => route.path, () => {
 })
 
 // 组件挂载时设置初始状态
-onMounted(() => {
+onMounted(async() => {
   setActiveMenu()
+  const res = await axios.get('/api/userinfo')
+  console.log(res.data)
+  if(res.data.username){
+    username.value = res.data.username
+  }
+  else{
+    return
+  }
 })
 
 // onMounted(async() =>{
@@ -304,6 +313,7 @@ const handleLogin = () => {
 .header-r {
   display: flex;
   gap: 10px;
+  align-items: center;
 }
 
 //侧边栏粘性定位

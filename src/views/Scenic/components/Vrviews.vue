@@ -1,102 +1,110 @@
 <template>
-  <div class="vrviews-container">
-    <ul class="vrviews-list">
-      <li>
-        <!-- 使用template ref数组收集视频元素 -->
-        <video controls autoplay muted loop preload="auto" poster="@/assets/img/ehai.jpg" playsinline>
-          <!-- 使用source标签明确指定视频格式 -->
-          <source src="@/assets/video/vr.mp4" type="video/mp4">
-          您的浏览器不支持HTML5视频播放。
-        </video>
-      </li>
-    </ul>
-    <el-button type="primary" round size="large" @click="handleClick">点击全屏观看</el-button>
-    <div class="back" @click="handleBackClick">
-      <i class="iconfont icon-left"></i>
-    </div>
-  </div>
+  <div ref="container" class="viewer"></div>
 </template>
+
 <script setup>
-import { useRouter } from 'vue-router'
-const router = useRouter()
-// 点击事件处理函数
-const handleClick = () => {
-  const video = document.querySelector('video');
-  if (video) {
-    video.requestFullscreen();
+import { onMounted, ref } from "vue";
+import * as THREE from "three";
+import img from "@/assets/img/pic6.png"; // 👉 确保路径正确
+
+const container = ref(null);
+
+onMounted(() => {
+  // 场景
+  const scene = new THREE.Scene();
+
+  // 相机
+  const camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    1,
+    1000
+  );
+
+  // 渲染器
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  container.value.appendChild(renderer.domElement);
+
+  // 球体（包裹图片）
+  const geometry = new THREE.SphereGeometry(500, 60, 40);
+  geometry.scale(-1, 1, 1); // 👈 必须反转
+
+  let mesh;
+
+  // 加载图片
+  const loader = new THREE.TextureLoader();
+  loader.load(
+    img,
+    (texture) => {
+      const material = new THREE.MeshBasicMaterial({ map: texture });
+      mesh = new THREE.Mesh(geometry, material);
+
+      // 👇 关键：让图片一开始在正前方
+      mesh.rotation.y = Math.PI;
+
+      scene.add(mesh);
+    },
+    undefined,
+    (err) => {
+      console.error("图片加载失败:", err);
+    }
+  );
+
+  // 相机位置（在球内部）
+  camera.position.set(0, 0, 0.1);
+
+  // ===== 鼠标控制 =====
+  let isDragging = false;
+  let lon = 0;
+  let lat = 0;
+
+  container.value.addEventListener("mousedown", () => {
+    isDragging = true;
+  });
+
+  container.value.addEventListener("mouseup", () => {
+    isDragging = false;
+  });
+
+  container.value.addEventListener("mouseleave", () => {
+    isDragging = false;
+  });
+
+  container.value.addEventListener("mousemove", (event) => {
+    if (isDragging) {
+      lon += event.movementX * 0.1;
+      lat -= event.movementY * 0.1;
+    }
+  });
+
+  // ===== 动画循环 =====
+  function animate() {
+    requestAnimationFrame(animate);
+
+    // 限制上下视角（防止翻转）
+    lat = Math.max(-85, Math.min(85, lat));
+
+    const phi = THREE.MathUtils.degToRad(90 - lat);
+    const theta = THREE.MathUtils.degToRad(lon);
+
+    const x = 500 * Math.sin(phi) * Math.cos(theta);
+    const y = 500 * Math.cos(phi);
+    const z = 500 * Math.sin(phi) * Math.sin(theta);
+
+    camera.lookAt(x, y, z);
+
+    renderer.render(scene, camera);
   }
-};
-// 返回事件处理函数
-const handleBackClick = () => {
-  router.push({ name: 'scenicdetail' })
-};
+
+  animate();
+});
 </script>
 
-<style scoped lang="scss">
-.vrviews-container {
+<style>
+.viewer {
+  width: 100vw;
   height: 100vh;
-  width: 100%;
-  position: relative;
-  background-color: #000;
-}
-
-.vrviews-list {
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  height: 100vh;
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  /* 为每个列表项添加样式，使视频垂直居中 */
-  li {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    //透视距离
-    perspective: 1000px;
-    // 视频旋转角度
-    transform-style: preserve-3d;
-
-    video {
-      /* 修改视频尺寸，让它填充整个容器并保持宽高比 */
-      width: 80%;
-      height: auto;
-      min-height: 290px;
-      /* 确保视频至少有一定高度显示 */
-      /* 保持视频比例，完全显示在容器内 */
-      object-fit: contain;
-      transition: all 3s linear;
-      opacity: 1;
-      visibility: visible;
-      display: block; /* 确保视频作为块级元素显示 */
-      background-color: transparent; /* 避免背景色影响 */
-    }
-  }
-
-  // 为中间的视频应用椭圆样式
-  //li video {
-   // -webkit-clip-path: ellipse(46% 39% at 47% 55%);
-    //clip-path: ellipse(46% 39% at 47% 55%);
-  //}
-}
-.el-button {
-  position: absolute;
-  top: 90%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.back {
-  position: absolute;
-  top: 3%;
-  left: 3%;
-  transform: translate(-50%, -50%);
-  .icon-left {
-    font-size: 40px;
-    color: #fff;
-  }
+  overflow: hidden;
 }
 </style>
