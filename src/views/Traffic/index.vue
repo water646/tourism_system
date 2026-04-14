@@ -41,12 +41,10 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
-const handleStyle = () => {
-  console.log('交通出行');
-}
+import {useRouter} from 'vue-router'
+const router = useRouter()
 const handlePlan = () => {
-  console.log('定制行程');
+  router.push({ name: 'plan' })
 }
 </script>
 <style scoped lang="scss">
@@ -102,9 +100,9 @@ const handlePlan = () => {
 .common{
     width: 300px;
     background-color: rgba(255, 255, 255, 0.2);
-    text-align: center; 
+    text-align: center;
     border-radius: 25px;
-   box-shadow: 0 0 8px rgba(233, 231, 231, 0.926); 
+   box-shadow: 0 0 8px rgba(233, 231, 231, 0.926);
 }
 .common i {
   font-size: 40px;
@@ -175,7 +173,7 @@ const handlePlan = () => {
     opacity: 0;
   }
 
-  
+
   100% {
     opacity: 1;
   }

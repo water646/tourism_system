@@ -35,6 +35,8 @@
             </ul>
           </div>
           <div class="header-r">
+            <p v-if="username" style="margin:10px; display: flex;">欢迎，{{ username }}</p>
+            <el-button v-if="username" type="danger" @click="handleLogout">退出</el-button>
             <el-button type="primary" @click="handleRegister">注册</el-button>
             <el-button type="success" @click="handleLogin">登录</el-button>
           </div>
@@ -43,8 +45,7 @@
       <el-container>
         <el-aside width="200px">
           <!-- 侧边栏菜单 -->
-          <el-menu default-active="1" class="el-menu-vertical-demo" @open="handleOpen"
-            @close="handleClose">
+          <el-menu :default-active="activeMenu" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
             <el-menu-item index="1" @click="$router.push('/')">
               <el-icon>
                 <location />
@@ -122,10 +123,57 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+// import axios from 'axios'
+import { ref, onMounted, watch } from 'vue'
 // import { Location, IconMenu, Goods, Map, Avatar, Calendar, Compass, Ticket } from '@element-plus/icons-vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+
+const username = ref('')
+const activeMenu = ref('1')
 const router = useRouter()
+const route = useRoute()
+
+// 根据路由设置侧边栏激活状态
+const setActiveMenu = () => {
+  const path = route.path
+  if (path === '/' || path === '/home') {
+    activeMenu.value = '1'
+  } else if (path.startsWith('/scenic')) {
+    activeMenu.value = '2'
+  } else if (path.startsWith('/goods')) {
+    activeMenu.value = '3'
+  } else if (path.startsWith('/traffic')) {
+    activeMenu.value = '4'
+  } else if (path.startsWith('/national')) {
+    activeMenu.value = '5'
+  } else if (path.startsWith('/seasons')) {
+    activeMenu.value = '6'
+  } else if (path.startsWith('/adventure')) {
+    activeMenu.value = '7'
+  } else if (path.startsWith('/activity')) {
+    activeMenu.value = '8'
+  }
+}
+
+// 监听路由变化
+watch(() => route.path, () => {
+  setActiveMenu()
+})
+
+// 组件挂载时设置初始状态
+onMounted(() => {
+  setActiveMenu()
+})
+
+// onMounted(async() =>{
+//   const res = await axios.get('/api/userinfo')
+//   if(res.data.username){
+//     username.value = res.data.username
+//   }
+//   else{
+//     return
+//   }
+// })
 
 
 const handleOpen = (key, keyPath) => {
@@ -142,10 +190,11 @@ const handleRegister = () => {
 const handleLogin = () => {
   router.push('/login')
 }
-// 侧边栏切换
-const handleSideChange = () => {
-  isSidebarOpen.value = !isSidebarOpen.value
-}
+// //登出
+// const handleLogout = async() =>{
+//    await axios.post('/api/logout')
+//   router.go(0)
+// }
 </script>
 
 <style scoped lang="scss">
@@ -261,7 +310,7 @@ const handleSideChange = () => {
 .el-aside {
   position: sticky;
   top: 60px; // 导航栏高度为60px，所以侧边栏顶部需要留出这个空间
-  left:0;
+  left: 0;
   z-index: 999; // 确保侧边栏在内容之上但在导航栏之下
   height: calc(100vh - 60px); // 减去导航栏高度
   overflow-y: auto; // 侧边栏内容过多时可以自己滚动

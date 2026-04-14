@@ -1,10 +1,10 @@
 <template>
   <div class="scenic-container">
     <ul class="scenic-list">
-      <li v-for="(item, index) in 4" :key="index" @click="handleClick(index)">
-        <img src="@/assets/img/ehai.jpg" alt="景点1">
-        <h3>洱海</h3>
-        <p>这是一个景点介绍</p>
+      <li v-for="item in scenicList" :key="item.id" @click="handleClick(item.id)">
+        <img :src="item.image" alt="景点1">
+        <h3>{{ item.name }}</h3>
+        <p>{{ item.introduction }}</p>
       </li>
     </ul>
     <el-pagination
@@ -17,17 +17,23 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { getScenic } from '@/apis/scenic'
 import { useRouter } from 'vue-router'
 const router = useRouter()
-const handleClick = (index) => {
+const handleClick = (id) => {
   router.push({
-    path: '/scenic/detail',
-    query: {
-      index: index
-    }
+    path: `/scenic/detail/${id}`,
   })
 }
+const scenicList = ref([])
+const getScenicList = async () => {
+  const res = await getScenic()
+  scenicList.value = res.data
+}
+onMounted(() => {
+  getScenicList()
+})
 </script>
 <style scoped lang="scss" >
   .scenic-container {
@@ -38,7 +44,7 @@ const handleClick = (index) => {
   }
   .scenic-list {
     position: absolute;
-    top:75%;
+    top:70%;
     left: 50%;
     transform: translate(-50%, -50%);
     display: grid;
@@ -49,7 +55,7 @@ const handleClick = (index) => {
   .scenic-list li {
     text-align: center;
     width: 250px;
-    height: 250px;
+    //height: 250px;
     border: 1px solid #000;
     border-radius: 10px;
     background-color: #fff;

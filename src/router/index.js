@@ -65,17 +65,22 @@ const routes = [
     component: () => import('../views/Login/index.vue'),
   },
   {
+    path: '/register',
+    name: 'register',
+    component: () => import('../views/Register/index.vue'),
+  },
+  {
     path: '/goods/all',
     name: 'allgoods',
     component: () => import('../views/Goods/components/AllGoods.vue'),
   },
   {
-    path: '/goods/detail',
+    path: '/goods/detail/:id',
     name: 'gooddetail',
     component: () => import('../views/Goods/components/GoodsDetail.vue'),
   },
   {
-    path: '/scenic/detail',
+    path: '/scenic/detail/:id',
     name: 'scenicdetail',
     component: () => import('../views/Scenic/components/ScenicDetail.vue'),
   },
@@ -118,6 +123,11 @@ const routes = [
     path: '/national/history',
     name: 'history',
     component: () => import('../views/National/components/History.vue'),
+  },
+  {
+    path: '/traffic/plan',
+    name: 'plan',
+    component: () => import('../views/Traffic/componemts/MakePlan.vue'),
   },
 ]
 const router = createRouter({

@@ -2,33 +2,12 @@
   <div class="national-container">
     <div class="bg"></div>
     <div class="content">
-      <div class="clothes common" @click="handleClothes()">
+      <div class="clothes common" v-for="item in nationalList" :key="item.id" @click="handleClick(item.id)">
         <i class="el-icon-clothes"></i>
-        <h3>民族服饰</h3>
-        <img src="@/assets/img/clothes.png" alt="">
+        <h3>{{ item.name }}</h3>
+        <img :src="getImagePath(item.id)" alt="">
         <div class="brief">
-          <p>民族服饰是指根据不同的民族或文化背景，设计和生产的服饰。</p>
-        </div>
-      </div>
-      <div class="festival common" @click="handleFestival()">
-        <h3>民族节日</h3>
-        <img src="@/assets/img/festival.png" alt="">
-        <div class="brief">
-          <p>民族节日是指根据不同的民族或文化背景，在特定的时间和日期上，为了表达民族的身份、文化和传统，而组织和庆祝的活动。</p>
-        </div>
-      </div>
-      <div class="perform common" @click="handlePerform()">     
-        <h3>民族表演</h3>
-        <img src="@/assets/img/perform.png" alt="">
-        <div class="brief">
-          <p>民族表演是指根据不同的民族或文化背景，在特定的时间和地点上，为了表达民族的身份、文化和传统，而组织和表演的活动。</p>
-        </div>
-      </div>
-      <div class="history common" @click="handleHistory()">
-        <h3>民族历史</h3>
-        <img src="@/assets/img/history.png" alt="">
-        <div class="brief">
-          <p>民族历史是指某个民族或文化背景的人在历史上的活动、事件和人物。</p>
+          <p>{{ item.brief }}</p>
         </div>
       </div>
     </div>
@@ -36,23 +15,35 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-
+import { getNational } from '@/apis/national'
 const router = useRouter()
+const nationalList = ref([])
+const defaultList = ref([
+  { id: 1, name: "民族服饰", picture: new URL('@/assets/img/clothes.png', import.meta.url).href, router: "clothes" },
+  { id: 2, name: "民族节日", picture: new URL('@/assets/img/festival.png', import.meta.url).href, router: "festival" },
+  { id: 3, name: "民族表演", picture: new URL('@/assets/img/perform.png', import.meta.url).href, router: "perform" },
+  { id: 4, name: "民族历史", picture: new URL('@/assets/img/history.png', import.meta.url).href, router: "history" },
+])
+const getNationalList = async () => {
+  const res = await getNational()
+  nationalList.value = res.data
 
-const handleClothes = () => {
-  router.push({ name: 'clothes' })
 }
-const handleFestival = () => {
-  router.push({ name: 'festival' })
+onMounted(() => {
+  getNationalList()
+})
+
+const handleClick = (id) => {
+  router.push({ name: defaultList.value.find((item) => item.id === id)?.router })
 }
-const handlePerform = () => {
-  router.push({ name: 'perform' })
+const getImagePath = (id) => {
+  const imageItem = defaultList.value.find(imgItem => imgItem.id === id)
+  return imageItem ? imageItem.picture : new URL('@/assets/img/clothes.png', import.meta.url).href
 }
-const handleHistory = () => {
-  router.push({ name: 'history' })
-}
+
+
 </script>
 <style scoped lang="scss">
 .national-container {
@@ -60,13 +51,15 @@ const handleHistory = () => {
   width: 100%;
   height: 100%;
 }
+
 .bg {
   width: 100%;
   height: 100vh;
   background-image: url('@/assets/img/national.png');
   background-size: cover;
 }
-.content{
+
+.content {
   position: absolute;
   bottom: 0;
   right: 0;
@@ -75,32 +68,33 @@ const handleHistory = () => {
   align-items: center;
   gap: 20px;
 }
+
 .common {
   width: 306px;
   height: 306px;
   background-color: rgba(255, 255, 255);
-  border-radius:50%;
+  border-radius: 50%;
   padding: 20px;
   box-sizing: border-box;
   text-align: center;
-  h3{
+
+  h3 {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 10px;
   }
-  img{
+
+  img {
     width: 100%;
     height: 120px;
     margin-bottom: 10px;
     //图片左上角超出部分隐藏
     border-radius: 50% 50% 0 0;
   }
-  .brief{
+
+  .brief {
     font-size: 14px;
     line-height: 21px;
   }
 }
-
-
-
 </style>

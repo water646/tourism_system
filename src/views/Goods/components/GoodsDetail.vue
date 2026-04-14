@@ -9,29 +9,24 @@
     </div>
 
     <!-- 商品图片展示区 -->
-    <div class="goods-gallery">
+    <!-- <div class="goods-gallery">
       <div class="main-image">
-        <img :src="selectedImage" :alt="goods.name" @click="showImageViewer = true" />
+        <img :src="selectedImage" :alt="goodsObj.name" @click="showImageViewer = true" />
       </div>
       <div class="thumbnails">
-        <div 
-          v-for="(img, index) in goods.images" 
-          :key="index"
-          class="thumbnail-item"
-          :class="{ active: selectedImageIndex === index }"
-          @click="selectImage(index)"
-        >
-          <img :src="img" :alt="`${goods.name} 图片${index + 1}`" />
+        <div v-for="(img, index) in goodsObj.images" :key="index" class="thumbnail-item"
+          :class="{ active: selectedImageIndex === index }" @click="selectImage(index)">
+          <img :src="img" :alt="`${goodsObj.name} 图片${index + 1}`" />
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- 商品基本信息 -->
     <div class="goods-info">
-      <h2 class="goods-name">{{ goods.name }}</h2>
+      <h2 class="goods-name">{{ goodsObj.name }}</h2>
       <div class="price-section">
-        <span class="price">¥{{ goods.price.toFixed(2) }}</span>
-       
+        <span class="price">¥{{ goodsObj.price?.toFixed(2) }}</span>
+
       </div>
     </div>
 
@@ -39,7 +34,7 @@
     <div class="section">
       <h3 class="section-title">商品简介</h3>
       <div class="intro-content">
-        <p>{{ goods.intro }}</p>
+        <p>{{ goodsObj.detail }}</p>
       </div>
     </div>
 
@@ -48,9 +43,8 @@
       <h3 class="section-title">制作方法</h3>
       <div class="method-content">
         <ul class="steps-list">
-          <li v-for="(step, index) in goods.manufacturingMethod" :key="index">
-            <span class="step-number">{{ index + 1 }}</span>
-            <span class="step-text">{{ step }}</span>
+          <li >
+            {{ goodsObj.makemethod }}
           </li>
         </ul>
       </div>
@@ -61,9 +55,9 @@
       <h3 class="section-title">购买建议</h3>
       <div class="suggestion-content">
         <ul class="suggestions-list">
-          <li v-for="(suggestion, index) in goods.purchaseSuggestions" :key="index">
+          <li >
             <i class="iconfont icon-gou"></i>
-            <span>{{ suggestion }}</span>
+            <span>{{ goodsObj.purchaseadvice }}</span>
           </li>
         </ul>
       </div>
@@ -71,38 +65,16 @@
 
     <!-- 商品评价 -->
     <div class="section">
-      <h3 class="section-title">用户评价 ({{ goods.reviews.length }})</h3>
+      <h3 class="section-title">用户评价 ({{ goodsObj.comment?.length || 0 }})</h3>
       <div class="reviews-content">
-        <div 
-          v-for="(review, index) in goods.reviews" 
-          :key="index"
-          class="review-item"
-        >
+        <div v-for="(item) in goodsObj.comment" :key="item.comment_id" class="review-item">
           <div class="review-header">
             <div class="reviewer-info">
-              <div class="avatar">{{ review.user.charAt(0) }}</div>
-              <div class="reviewer-name">{{ review.user }}</div>
-            </div>
-            <div class="review-rating">
-              <i 
-                v-for="star in 5" 
-                :key="star"
-                class="iconfont"
-                :class="star <= review.rating ? 'icon-xingxing' : 'icon-xingxing1'"
-              ></i>
+              <div class="avatar">{{ item.time}}</div>
+              <div class="reviewer-name">{{ item.username }}</div>
             </div>
           </div>
-          <div class="review-date">{{ review.date }}</div>
-          <div class="review-content">{{ review.content }}</div>
-          <div class="review-images" v-if="review.images && review.images.length > 0">
-            <img 
-              v-for="(img, imgIndex) in review.images" 
-              :key="imgIndex"
-              :src="img" 
-              :alt="`用户评价图片${imgIndex + 1}`"
-              class="review-img"
-              @click="previewReviewImage(img)"
-            />
+          <div class="review-content">{{ item.content }}</div>
           </div>
         </div>
       </div>
@@ -111,112 +83,64 @@
 
 
     <!-- 图片查看器 -->
-    <div class="image-viewer" v-if="showImageViewer" @click="closeImageViewer">
+    <!-- <div class="image-viewer" v-if="showImageViewer" @click="closeImageViewer">
       <div class="viewer-content" @click.stop>
-        <img :src="selectedImage" :alt="goods.name" />
+        <img :src="selectedImage" :alt="goodsObj.name" />
         <button class="close-button" @click="closeImageViewer">×</button>
       </div>
-    </div>
-  </div>
+    </div> -->
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import goods1 from '@/assets/img/tea.jpg'
-import goods2 from '@/assets/img/ping.jpg'
-import goods3 from '@/assets/img/tianma.jpg'
-import goods4 from '@/assets/img/huotui.jpg'
+import { getGoodsDetail } from '@/apis/goods'
+// import goods1 from '@/assets/img/tea.jpg'
+// import goods2 from '@/assets/img/ping.jpg'
+// import goods3 from '@/assets/img/tianma.jpg'
+// import goods4 from '@/assets/img/huotui.jpg'
 const route = useRoute()
 const router = useRouter()
 
 // 响应式数据
-const selectedImageIndex = ref(0)
+// const selectedImageIndex = ref(0)
 const selectedImage = ref('')
-const showImageViewer = ref(false)
-const showLoadMore = ref(true)
+// const showImageViewer = ref(false)
+// const showLoadMore = ref(true)
 
 // 商品数据
-const goods = ref({
-  id: 1,
-  name: '云南少数民族特色手工布艺包',
-  price: 128.00,
-  originalPrice: 198.00,
-  discount: '6.5',
-  sales: 238,
-  stock: 156,
-  intro: '这是一款融合云南少数民族传统工艺的手工布艺包，采用优质天然面料精心缝制而成。包身图案源自彝族传统纹样，色彩鲜艳，寓意吉祥。手工刺绣工艺精湛，每一针每一线都展现了匠人的用心。包型设计时尚实用，内部空间充足，配有多个隔层，方便收纳各种物品。无论是日常使用还是旅行携带，都是彰显个性与品味的理想选择。',
-  images: [
-    goods1,
-    goods2,
-    goods3,
-    goods4
-  ],
-  manufacturingMethod: [
-    '选取优质天然棉麻面料，经过清洗、晾晒、熨烫处理',
-    '根据传统图案设计，使用天然植物染料进行染色',
-    '手工艺人采用平绣、锁绣等多种刺绣技法，在面料上绣制精美图案',
-    '按照设计图纸裁剪布料，精心缝制包身各部分',
-    '安装金属配件，进行最后的整理和质量检查'
-  ],
-  purchaseSuggestions: [
-    '建议手洗或干洗，避免机洗损伤刺绣图案',
-    '存放时请避开潮湿、阳光直射的环境',
-    '搭配民族风服饰效果更佳，也可与现代服装混搭',
-    '适合作为礼品赠送亲友，具有浓厚的文化特色',
-    '如有轻微色差属于正常现象，每一件都是独一无二的手工艺品'
-  ],
-  reviews: [
-    {
-      id: 1,
-      user: '旅行者小明',
-      rating: 5,
-      date: '2024-01-15',
-      content: '包的质量非常好，刺绣很精美，图案也很有民族特色。容量够大，日常使用完全没问题。朋友看到都很喜欢，已经推荐给她们了。',
-      images: []
-    },
-    {
-      id: 2,
-      user: '民族风爱好者',
-      rating: 4,
-      date: '2024-01-10',
-      content: '手工工艺确实不错，图案很精致。唯一一点小遗憾是肩带有点短，希望能改进一下。不过整体来说还是很满意的一次购物。',
-      images: [goods4]
-    },
-    {
-      id: 3,
-      user: '文艺青年',
-      rating: 5,
-      date: '2024-01-05',
-      content: '超级喜欢这个包！面料舒适，做工精细，每次背出去都会有人问在哪里买的。传统文化与现代设计的完美结合，值得推荐！',
-      images: [goods3,goods1]
-    }
-  ]
-})
-
+const goodsObj = ref({})
 // 选择图片
-const selectImage = (index) => {
-  selectedImageIndex.value = index
-  selectedImage.value = goods.value.images[index]
+// const selectImage = (index) => {
+//   selectedImageIndex.value = index
+//   selectedImage.value = goodsObj.value.images[index]
+// }
+const getDetail = async () => {
+  const res = await getGoodsDetail(route.params.id)
+  console.log(res)
+  goodsObj.value = res.data
+  // 如果有多个图片，默认选择第一张
+  if (goodsObj.value.images && goodsObj.value.images.length > 0) {
+    selectedImage.value = goodsObj.value.images[0]
+  }
 }
-
 // 关闭图片查看器
-const closeImageViewer = () => {
-  showImageViewer.value = false
-}
+// const closeImageViewer = () => {
+//   showImageViewer.value = false
+// }
 
 // 预览评价图片
-const previewReviewImage = (img) => {
-  selectedImage.value = img
-  showImageViewer.value = true
-}
+// const previewReviewImage = (img) => {
+//   selectedImage.value = img
+//   showImageViewer.value = true
+// }
 
 // 加载更多评价
-const loadMoreReviews = () => {
-  // 模拟加载更多评价
-  showLoadMore.value = false
-  alert('已经加载全部评价')
-}
+// const loadMoreReviews = () => {
+//   // 模拟加载更多评价
+//   showLoadMore.value = false
+//   alert('已经加载全部评价')
+// }
 
 
 
@@ -227,13 +151,7 @@ const handleBack = () => {
 
 // 组件挂载时初始化
 onMounted(() => {
-  // 如果有多个图片，默认选择第一张
-  if (goods.value.images && goods.value.images.length > 0) {
-    selectedImage.value = goods.value.images[0]
-  }
-  
-  // 可以根据路由参数获取商品ID，这里使用模拟数据
-  console.log('商品ID:', route.params.id || 1)
+  getDetail()
 })
 </script>
 

@@ -2,7 +2,7 @@
   <div class="login-container">
     <a href="/">首页</a>
     <div class="login-content">
-      <h2>登录</h2>
+      <h2>注册</h2>
       <el-form :model="form" :rules="rules" ref="formRef" label-width="120px">
         <el-form-item label="用户名" prop="username">
           <el-input v-model="form.username" placeholder="请输入用户名" />
@@ -11,7 +11,7 @@
           <el-input v-model="form.password" placeholder="请输入密码" type="password" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleLogin" class="login-button">登录</el-button>
+          <el-button type="primary" @click="handleLogin" class="login-button">注册</el-button>
           <el-button type="link" @click="handleCancel">取消</el-button>
         </el-form-item>
       </el-form>
@@ -29,8 +29,6 @@ const form = ref({
   password: ''
 })
 
-const formRef = ref(null)
-
 const rules = ref({
   username: [
     { required: true, message: '请输入用户名', trigger: 'blur' }
@@ -40,17 +38,21 @@ const rules = ref({
   ]
 })
 
+const formRef = ref(null)
 const handleLogin = async() => {
-  const res = await axios.post('/api/login',{usn:form.value.username,pwd:form.value.password})
-  if (res.data.status=='success'){
-    alert('登录成功！')
-  }
-  else{
-    alert('用户名或密码错误！')
+  if(!form.value.username||!form.value.password){
+    alert('用户名和密码不允许为空!')
     return
   }
 
-  router.push('/')
+  const res = await axios.post('/api/register',{usn:form.value.username,pwd:form.value.password})
+  if (res.data.status=='success'){
+    alert('注册成功！')
+    router.push('/login')
+  }
+  else{
+    alert('用户名已存在，注册失败！')
+  }
 }
 // 取消登录
 const handleCancel = () => {

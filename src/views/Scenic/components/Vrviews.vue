@@ -5,19 +5,18 @@
         <!-- 使用template ref数组收集视频元素 -->
         <video controls autoplay muted loop preload="auto" poster="@/assets/img/ehai.jpg" playsinline>
           <!-- 使用source标签明确指定视频格式 -->
-          <source src="@/assets/img/erhai.mp4" type="video/mp4">
+          <source src="@/assets/video/vr.mp4" type="video/mp4">
           您的浏览器不支持HTML5视频播放。
         </video>
       </li>
     </ul>
     <el-button type="primary" round size="large" @click="handleClick">点击全屏观看</el-button>
-    <div class="back" @click="handleBackClick"> 
+    <div class="back" @click="handleBackClick">
       <i class="iconfont icon-left"></i>
     </div>
   </div>
 </template>
 <script setup>
-import { ref} from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 // 点击事件处理函数
@@ -78,10 +77,10 @@ const handleBackClick = () => {
   }
 
   // 为中间的视频应用椭圆样式
-  li video {
-    -webkit-clip-path: ellipse(46% 39% at 47% 55%);
-    clip-path: ellipse(46% 39% at 47% 55%);
-  }
+  //li video {
+   // -webkit-clip-path: ellipse(46% 39% at 47% 55%);
+    //clip-path: ellipse(46% 39% at 47% 55%);
+  //}
 }
 .el-button {
   position: absolute;

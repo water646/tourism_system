@@ -24,5 +24,15 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  base:'/Tourism-System/'
+  base: '/Tourism-System/',
+  //设定默认submit网址
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://wfda8599.natappfree.cc', // 后端地址
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '/api'),
+      },
+    },
+  },
 })
